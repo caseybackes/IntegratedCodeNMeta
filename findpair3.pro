@@ -1,4 +1,5 @@
 ;description of the pro 'findpair'?
+; no, its in the comment below. 
 pro findpair3, known_file, unknown_file, min_delta_t,SKY_FILE =sky, NORTH_FILE= north, SOUTH_FILE= south, EAST = east, WEST = west, FLAT=flat
   ; searches the directory of a known observation file, and searches for the closest (in time) file
   ; that contains a string. Stores the full path to the matching file in the unknown_file variable
