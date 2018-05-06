@@ -202,7 +202,7 @@ if not keyword_set(single) then begin
   print, "south: ", file_basename(merc_south_image) 
   print, '-----------------------------------------------------------------'
 
-  stop;" .c to continue" ; chrono2
+  ;stop;" .c to continue" ; chrono2
   
   ; _______________________________
   ; Process / Restore Center Image:

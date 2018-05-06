@@ -144,7 +144,7 @@ imreg_x, merc_reduced, slice_indices, merc_reduced, transformation_matrix
 ;; can then be applied to the 'warp_tri' function to subsequently register the periphreal images.  
 ;;*** Note: register5.pro is now obsolete with the implementation of 'image_registration.pro'
 ;;;;register5, merc_reduced, slice_indices, merc_regd, shear_matrix
-;
+
 ;;image_registration, merc_reduced, slice_indices, sheared_img, trans_matrix
 ;stop
 ;; separate the registration maxtrix into vectors.
@@ -193,8 +193,7 @@ imreg_x, merc_reduced, slice_indices, merc_reduced, transformation_matrix
 ; 5) Determine the wavelength values for pixels of the registered image.
 ; PARAMETERS SAVED FOR FUTURE PROCESSING: 
 ;   SLICE_INDICES
-;   ROWS_AUTOREMOVED
-;   ROWS_MANUALLYREMOVED
+;   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
@@ -279,7 +278,10 @@ merc_regd_gapless = merc_reduced
 ; noise areas above and below the region of the image that contains the slices. with so many rows of pixels, the 
 ; natural noise within the spectrum is significantly reduced (by 1/sqrt(N) )  and gives a smoother signal. 
 
-stop,'At this point, work on developing the "fit spectral bounds" function to pick out waterlines. This serves to automate the wavelength fit that takes place in "determine_wavelength" function'
+stop,'At this point, work on developing the "fit_spectral_bounds.pro " function to pick out waterlines. This serves to automate the wavelength fit that takes place in "determine_wavelength" function'
+fit_spectral_wavelength, merc_reduced, abs_lines
+
+
 wavelength_check = 'n'
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeWavelength.sav'
 stop
