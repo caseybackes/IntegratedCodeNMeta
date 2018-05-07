@@ -277,9 +277,9 @@ merc_regd_gapless = merc_reduced
 ; set the observed spectrum by taking the mean of all slices in the slice direction. this leaves out the
 ; noise areas above and below the region of the image that contains the slices. with so many rows of pixels, the 
 ; natural noise within the spectrum is significantly reduced (by 1/sqrt(N) )  and gives a smoother signal. 
-
+save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeWavelength.sav'
 stop,'At this point, work on developing the "fit_spectral_bounds.pro " function to pick out waterlines. This serves to automate the wavelength fit that takes place in "determine_wavelength" function'
-fit_spectral_wavelength, merc_reduced, abs_lines
+fit_spectral_wavelength, merc_reduced, abs_lines, width = 30
 
 
 wavelength_check = 'n'
@@ -288,7 +288,7 @@ stop
 while wavelength_check eq 'n' do begin
   determine_wavelength_scale, sky_regd, slice_indices, observed_wavelength
 
-  observed_spectrum =  median(merc_regd_gapless[*,slice_indices[0]:slice_indices[-1]], dim = 2); this will work even if slice boundaries were manually chosen
+  observed_spectrum =  median(merc_reduced[*,slice_indices[0]:slice_indices[-1]], dim = 2); this will work even if slice boundaries were manually chosen
   size_of_observed_spectrum = observed_spectrum.length
   
   ; determine the doppler shift of the merc spectrum
@@ -338,10 +338,10 @@ while wavelength_check eq 'n' do begin
 endwhile
 ;wdelete
 
-;stop
+stop
 
 ;
- match_spectral_bounds4, corrected_observed_wavelength, observed_spectrum, merc_regd_gapless, $ ; inputs
+ match_spectral_bounds4, corrected_observed_wavelength, observed_spectrum, merc_reduced, $ ; inputs
   final_observed_spectrum, final_observed_wl, final_solar_spectrum, final_solar_wl, trimmed_merc_image ;outputs
 
 
