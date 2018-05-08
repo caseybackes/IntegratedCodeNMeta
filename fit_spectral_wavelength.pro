@@ -1,11 +1,11 @@
 pro fit_spectral_wavelength, img, mins, ABSORPTION_LINE_WIDTH = absorption_line_width
-  if not keyword_set(ABSORPTION_LINE_WIDTH)then absorption_line_width = 8 
+  if not keyword_set(ABSORPTION_LINE_WIDTH)then absorption_line_width = 10 
   ;print, "width of search set to ", absorption_line_width," pixels of spectral data."
   ;stop
   dims = img.dim
   img_width = dims[0]
   img_height = dims[1]
-  spectrum = mean(img, dim =2)
+  spectrum = smooth(mean(img, dim =2),2)
   mins = []
   
   for i=absorption_line_width,img_width-absorption_line_width-1 do begin
@@ -43,35 +43,33 @@ pro fit_spectral_wavelength, img, mins, ABSORPTION_LINE_WIDTH = absorption_line_
   
   likely_fline = where(spectrum[mins] eq min(spectrum[mins]))
   remove, likely_fline, mins
-  l = findgen(mins.length)
-  stop
+;  stop
+  l = combigen(absorption_wavelengths.length, mins.length)
   chsq = []
-  for i=1,4 do begin
-    coeff=linfit(absorption_wavelengths[l],mins, CHISQR = r)
-    chsq = [chsq,r]
-    print,"l = ", l
-    print, "chisqr = ", r
-    l = l+i
+  stop
+  ldim = l.dim
+  total_combinations = ldim[0]
+  for i=0,total_combinations-1 do begin
+    print, l[i,*]
+    print, ' '
   endfor
+  stop
+  c = ['a','a']
+  for i=0,total_combinations-1 do begin
+    coeff=linfit(mins, absorption_wavelengths[l[i,*]], CHISQR = r)
+    chsq = [chsq,r]
+    c = [c,[coeff[0], coeff[1]]]
+  endfor
+  stop
+  c = reform(c,[2,c.length/2])
+
+  best_fit_wavelengths = absorption_wavelengths[l[where(chsq eq min(chsq)),*]]
+  print, 'best lines (codes): ', l[where(chsq eq min(chsq)),*]+1
   plt = plot(chsq, title="X2 fit as a function of delta el")
   ;coeff=linfit(absorption_wavelengths[l],mins, CHISQR = r)
-
-
-
-
-  coeff_polyline = poly_fit(absorption_wavelengths[l],mins, 2)
-  
-  
-  
-  for i=0,mins.length-1 do begin
-    
-  endfor
-  
-  
-  
-  
+  stop
   plt = plot(spectrum)
-  plt = plot(mins, spectrum[mins], /overplot, 'r*', title = "Identified absorption lines w/Frahnhofer")
+  plt = plot(mins, spectrum[mins], /overplot, 'ro', title = "Identified absorption lines w/Frahnhofer")
 
 
 end

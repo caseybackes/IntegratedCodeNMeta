@@ -279,7 +279,7 @@ merc_regd_gapless = merc_reduced
 ; natural noise within the spectrum is significantly reduced (by 1/sqrt(N) )  and gives a smoother signal. 
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeWavelength.sav'
 stop,'At this point, work on developing the "fit_spectral_bounds.pro " function to pick out waterlines. This serves to automate the wavelength fit that takes place in "determine_wavelength" function'
-fit_spectral_wavelength, merc_reduced, abs_lines, width = 30
+fit_spectral_wavelength, sky_regd, abs_lines, absorption_line_width = 8
 
 
 wavelength_check = 'n'
