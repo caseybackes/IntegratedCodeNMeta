@@ -1,0 +1,8 @@
+Processing Log
+
+
+Date: 5/8/2018
+Contributor: Casey Backes
+Notes: successfully went through a 'singlemercproc' of center image "2012\Jun2012\Jun19\mc11-001a.fit" using some of the new automated processes for registration and slice index determination. Not perfect on the slice bounds, and the calibration params were not saved (need to update where they are being saved to in a way that all contributors can access...does github save subdirectories? ) Continuing through singlemercproc, I let the pipeline move on to the main 'merc' pipeline and encountered a failure without having the calibration parameters saved. 
+ACTION ITEMS: Resolve directory location to save calibration parameters in a subdirectory in this github repo.
+________________________________________________________________________________________________________________________________
