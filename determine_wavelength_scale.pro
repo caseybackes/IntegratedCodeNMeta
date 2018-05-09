@@ -10,7 +10,7 @@ pro determine_wavelength_scale, sky_bright, slice_indices, observed_wl
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; 5) Determine the wavelength values for pixels of the registered image.
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  stop
+  ;stop
   ; we use the sky image to identify water absorption lines to which we already know the
   ; associated wavelengths.
   mean_sky_array = mean(sky_bright[*,slice_indices[0]:slice_indices[-1]], dim = 2)
@@ -100,9 +100,9 @@ pro determine_wavelength_scale, sky_bright, slice_indices, observed_wl
   ; I have a png file with the identified lines and their codes, in addition to having one pinned to the wall of my office cubicle.
   ; this will ask you if you want to see a png of such a sky spectrum with waterlines.
   d = dialog_message("Do you need to see the image of waterlines and their codes? ", /question)
-  if d eq 'Yes' then begin
-    waterlines_image = image(read_png("C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\reference sky spectrum with waterlines.PNG"), title = "Waterline features and wavelengths and codes")
-  endif
+;  if d eq 'Yes' then begin
+;    waterlines_image = image(read_png("C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\reference sky spectrum with waterlines.PNG"), title = "Waterline features and wavelengths and codes")
+;  endif
 
 
   ; Now we associate each of the water lines we selected. From the image
@@ -162,3 +162,4 @@ pro determine_wavelength_scale, sky_bright, slice_indices, observed_wl
   return
   end
 
+reverse(

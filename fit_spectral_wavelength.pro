@@ -26,7 +26,7 @@ pro fit_spectral_wavelength, img, mins, ABSORPTION_LINE_WIDTH = absorption_line_
   ; wavelength an appreciable amount from its true wavelength, I dont know, but because it isnt constant, we 
   ; exclude it and use only the water lines. I believe Rosemary also used the same argument agains the iron line, 
   ; claiming that it was from the solar spectrum, not a feature of atmospheric absorption. 
-  absorption_wavelengths = float([$
+  absorption_wavelengths = reverse(float([$
       5885.9771, $  ; h2o
       5886.3363, $  ; h2o
       5887.2228, $  ; h2o
@@ -35,8 +35,8 @@ pro fit_spectral_wavelength, img, mins, ABSORPTION_LINE_WIDTH = absorption_line_
       5891.1760, $  ; h2o
       5891.6556, $  ; h2o
       5892.3937, $  ; h2o
-      5892.8794] )  ; Iron 
-
+      5892.8794] ))  ; Iron 
+  
   ; we can now test the best linear fit between the absorption wavelengths and columns of absorption lines 
   ; in our sky spectrum we have certainly found the fraunhofer line. we want to remove that from testing 
   ; a fit to the absorption lines. 
@@ -46,30 +46,30 @@ pro fit_spectral_wavelength, img, mins, ABSORPTION_LINE_WIDTH = absorption_line_
 ;  stop
   l = combigen(absorption_wavelengths.length, mins.length)
   chsq = []
-  stop
+  ;stop
   ldim = l.dim
   total_combinations = ldim[0]
   for i=0,total_combinations-1 do begin
     print, l[i,*]
     print, ' '
   endfor
-  stop
+  ;stop
   c = ['a','a']
   for i=0,total_combinations-1 do begin
     coeff=linfit(mins, absorption_wavelengths[l[i,*]], CHISQR = r)
     chsq = [chsq,r]
     c = [c,[coeff[0], coeff[1]]]
   endfor
-  stop
+  ;stop
   c = reform(c,[2,c.length/2])
 
   best_fit_wavelengths = absorption_wavelengths[l[where(chsq eq min(chsq)),*]]
   print, 'best lines (codes): ', l[where(chsq eq min(chsq)),*]+1
-  plt = plot(chsq, title="X2 fit as a function of delta el")
+  plt = plot(chsq, title="X2 fit as a function of combinations of lambdas")
   ;coeff=linfit(absorption_wavelengths[l],mins, CHISQR = r)
-  stop
   plt = plot(spectrum)
   plt = plot(mins, spectrum[mins], /overplot, 'ro', title = "Identified absorption lines w/Frahnhofer")
 
+  
 
 end

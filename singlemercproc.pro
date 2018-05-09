@@ -100,7 +100,7 @@ m = string(string(today[4])+'-'+$
    string(today[1]) +'-'+$
    string(today[2])+' @'+$
    curhr+'h'+curmn+'m'+cursc+'s ')
-
+stop, "The calibration parameters cannot be routinely saved until the 'pos_savefile_name' variable is defined to a location on YOUR machine... also we need to fix this...SOON!"
 case !Version.os_family of 
   "Windows": pos_savefile_name = string('C:\Users\Casey Backes\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\calibration_params\processing calibrations for ' +  merc_timestamp + ' created on '+ m +'.sav')
   "unix":    pos_savefile_name = string('/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/calibration_params/processing calibrations for '+  merc_timestamp + ' created on '+ m +'.sav')  
@@ -279,7 +279,7 @@ merc_regd_gapless = merc_reduced
 ; natural noise within the spectrum is significantly reduced (by 1/sqrt(N) )  and gives a smoother signal. 
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeWavelength.sav'
 stop,'At this point, work on developing the "fit_spectral_bounds.pro " function to pick out waterlines. This serves to automate the wavelength fit that takes place in "determine_wavelength" function'
-fit_spectral_wavelength, sky_regd, abs_lines, absorption_line_width = 8
+fit_spectral_wavelength, sky_regd, abs_lines, absorption_line_width = 20
 
 
 wavelength_check = 'n'
@@ -488,9 +488,20 @@ OBSERVATION_DATE_SHORT = STRMID(OBSERVATION_DATE, 0,10)
 ask_save_params = ''
 read, ask_save_params,prompt= "Save calibrations? (y/n): "
 if ask_save_params eq 'y' or ask_save_params eq '' then begin
+;  save, OBSERVATION_DATE_SHORT, ROTATION_REQUIRED, $
+;    SLICE_INDICES, $
+;    SHEAR_MATRIX, ROWS_AUTOREMOVED,ROWS_MANUALLYREMOVED, $
+;    EPHEMERIS_STRUCTURE, $
+;    CORRECTED_OBSERVED_WAVELENGTH, $
+;    D2_START,D2_END, $
+;    CONTINUUM_START, CONTINUUM_END, $
+;    FINAL_OBSERVED_WL,FINAL_SOLAR_SPECTRUM, dark_array, $
+;    center_em, center_ct, delta_lambda_d2 ,delta_lambda_ct,$
+;    filename = pos_savefile_name
+;  
   save, OBSERVATION_DATE_SHORT, ROTATION_REQUIRED, $
     SLICE_INDICES, $
-    SHEAR_MATRIX, ROWS_AUTOREMOVED,ROWS_MANUALLYREMOVED, $
+    SHEAR_MATRIX,  $
     EPHEMERIS_STRUCTURE, $
     CORRECTED_OBSERVED_WAVELENGTH, $
     D2_START,D2_END, $
@@ -498,7 +509,7 @@ if ask_save_params eq 'y' or ask_save_params eq '' then begin
     FINAL_OBSERVED_WL,FINAL_SOLAR_SPECTRUM, dark_array, $
     center_em, center_ct, delta_lambda_d2 ,delta_lambda_ct,$
     filename = pos_savefile_name
-  
+
   print, "Calibration saved as file: "
   print, pos_savefile_name
 endif
