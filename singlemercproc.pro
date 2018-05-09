@@ -137,7 +137,7 @@ atv, merc_reduced
 
 ;/ALPHA TESTING***************
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsAfterSmartslice.sav'
-
+stop, "ask for the file path to a merc file to dertermine if the path can be manipulated -> looking to save calibration params"
 imreg_x, merc_reduced, slice_indices, merc_reduced, transformation_matrix
 ;; *** OBSOLETE: REGISTRATION OF THE CLEAN MERCURY IMAGE 
 ;; Align the slices and spectra to be perfectly horizontal and vertical, respectively. The returned 'shear matrix'
