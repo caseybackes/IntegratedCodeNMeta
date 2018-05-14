@@ -67,8 +67,12 @@ pro singlemercproc, merc_center, $
 
 home = file_dirname(merc_center)
 
-cd, home
-stop
+curdir = strsplit(home,'\', /extract)
+while curdir[-1] ne "MercuryResearch" do begin
+  cd, '..' & curdir = curdir[0:-2]
+endwhile
+
+curdir = strjoin(curdir, '\')
 
 dark_array = dark_reduce3(merc_center)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;       
@@ -105,13 +109,9 @@ m = string(string(today[4])+'-'+$
    string(today[1]) +'-'+$
    string(today[2])+' @'+$
    curhr+'h'+curmn+'m'+cursc+'s ')
-stop, "The calibration parameters cannot be routinely saved until the 'pos_savefile_name' variable is defined to a location on YOUR machine... also we need to fix this...SOON!"
-case !Version.os_family of 
-  "Windows": pos_savefile_name = string('C:\Users\Casey Backes\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\calibration_params\processing calibrations for ' +  merc_timestamp + ' created on '+ m +'.sav')
-  "unix":    pos_savefile_name = string('/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/calibration_params/processing calibrations for '+  merc_timestamp + ' created on '+ m +'.sav')  
-endcase
-psn = file_which('merc.pro')
-psn2 = strsplit(psn, '\', /extract)
+pos_savefile_name = string(curdir + "\IntegratedCodeNMeta\calibration_params\processing calibrations for " +  merc_timestamp + ' created on '+ m +'.sav')
+stop
+
 
 if isa(rotation_required) eq 0 then rotation_required = 0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -144,7 +144,6 @@ atv, merc_reduced
 
 ;/ALPHA TESTING***************
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsAfterSmartslice.sav'
-stop, "ask for the file path to a merc file to dertermine if the path can be manipulated -> looking to save calibration params"
 imreg_x, merc_reduced, slice_indices, merc_reduced, transformation_matrix
 ;; *** OBSOLETE: REGISTRATION OF THE CLEAN MERCURY IMAGE 
 ;; Align the slices and spectra to be perfectly horizontal and vertical, respectively. The returned 'shear matrix'
@@ -285,13 +284,13 @@ merc_regd_gapless = merc_reduced
 ; noise areas above and below the region of the image that contains the slices. with so many rows of pixels, the 
 ; natural noise within the spectrum is significantly reduced (by 1/sqrt(N) )  and gives a smoother signal. 
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeWavelength.sav'
-stop,'At this point, work on developing the "fit_spectral_bounds.pro " function to pick out waterlines. This serves to automate the wavelength fit that takes place in "determine_wavelength" function'
-fit_spectral_wavelength, sky_regd, abs_lines, absorption_line_width = 20
+;stop,'At this point, work on developing the "fit_spectral_bounds.pro " function to pick out waterlines. This serves to automate the wavelength fit that takes place in "determine_wavelength" function'
+;fit_spectral_wavelength, sky_regd, abs_lines, absorption_line_width = 20
 
 
 wavelength_check = 'n'
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeWavelength.sav'
-stop
+;stop
 while wavelength_check eq 'n' do begin
   determine_wavelength_scale, sky_regd, slice_indices, observed_wavelength
 
@@ -345,7 +344,7 @@ while wavelength_check eq 'n' do begin
 endwhile
 ;wdelete
 
-stop
+;stop
 
 ;
  match_spectral_bounds4, corrected_observed_wavelength, observed_spectrum, merc_reduced, $ ; inputs
@@ -353,55 +352,8 @@ stop
 
 
 wdelete
-  
-; UPDATE: 5/15
-      ; i think this is the place where I stopped and worked on spectral_fit.pro 
-      ; to find the overlapping bounds of the mercury and solar spectra, and reduce the 
-      ; solar light from the mercury light. 
-; UPDATE: 5/18
-      ; I have the first part of 'spectral_fit.pro' code separated into a new procedure 
-      ; file that matches the spectral limits of the mercury and solar wavelengths and 
-      ; the corresponding spectal intensities at those wavelengths. But the output arrays 
-      ; are not scaled to a normalized intensity. That process must be done for every 
-      ; subslice in the image building procedure 'imbuild.pro' or 'man_imbuild.pro' which
-      ; equates to every pixel in the final remapped image. This is because the intensity 
-      ; of reflected solar light changes with latitude (primary slices in the reduced spectral image are unique in latitude)
-      ; so the solar light must be scaled to each subslice before reduced from each subslice. 
-      ; Im going to put the second half of the 'spectral_fit.pro' code (which iteratively scales the 
-      ; solar spectrum to match the observed spectrum intensities) into the man_imbuild.pro code
-      ; since its the image building code that can take arbitrary slice boundaries - which is 
-      ; apprearing to become the dominate way to get slice boundaries. 
-; UPDATE: 5/24
-      ; the second half of "spectral_fit.pro" is now contained in "scale2match.pro", which is a *function* that returns 
-      ; the appropriately scaled down version of the solar spectrum with correct left and right spectral limits as afforded by 
-      ; "match_spectral_bounds.pro". 
-      ; with this returned array from spectral_fit(), we can subtract it from the final_observed_spectrum to isolate the 
-      ; emission spectrum from Mercury. This is done iteratively within the manual image building procedure, "man_imbuild.pro". 
-      ; It is done for every subslice within each of the (usually 10) primary slices in the spectral image. This is how we 
-      ; account for the decreasing solar spectrum intensity as a function of latitude. 
-      ;     
-      ;     
-      ;     
-      ;     
-; Chat with Tim: 
-;                  you can get a better scaling of solar spectrum to merc spectrum if you avoid the region where the d2 emission is. set some sort of 'exclude' statement
-;                  in the x2 routine that evaluates the difference between the solar and merc spectra to determine the best fit. 
-;                 
-;                  we also discussed the validity of using a constant width "d2 filter". it looks to me that
-;                  0.136 Angstroms will be the best width, based on *ONE* observation of the d2 width. which is 
-;                  indeed bad sampling but it gives a decent "order of magnitude" estimate of 0.135A width.  
-;                  the broadening wont change appreciably with the low level dispersion that we have, so a constant
-;                  width d2 filter (roughly 0.13 A wide) is indeed a valid approach. the only complication is that 
-;                  these start and stop wavelength values must be found in terms of pixel location within the raw image
-;                  (well, not "raw", but flat fielded and registered... so "mostly reduced" data, if "fully reduced" is the 
-;                  remapping from spectral lines into a 2D image of the Mercury crescent. )
-;                  
+                 
 
-
-
-
-
-;stop
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 7) Establish wavelength integration bounds for d2 emission and continuum reflectance
@@ -432,35 +384,9 @@ delta_lambda_ct= abs((CONTINUUM_END-CONTINUUM_START) * dl)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 man_imbuild2, trimmed_merc_image, slice_indices, $
   d2_start, d2_end, CONTINUUM_START, CONTINUUM_END, $
-  final_solar_spectrum, file_basename(merc_center) , emission_image, continuum_reflectance_image, /showplots
+  final_solar_spectrum, file_basename(merc_center) , emission_image, continuum_reflectance_image;, /showplots
 
-;;-----------------------------------------------------------------------------------------------------------------------------------
-;;Experiment with larger continuum window
-;----- RESULTS: Didnt make much of any difference on the few images i tried it out on.
-;------------   But its still down here if anyone wants to try their hand at it again.  
-;-------------------------------------------------------------------------------------
-;; make a new continuum with a larger integration width in the spectrum
-;
-;range_factor = 2.0
-;spectral_integration_bounds, final_observed_spectrum, slice_indices, d2_start, d2_end, CONTINUUM_START2, CONTINUUM_END2, m=range_factor
-;man_imbuild2, trimmed_merc_image, slice_indices, $
-;  d2_start, d2_end, CONTINUUM_START2, CONTINUUM_END2, $
-;  final_solar_spectrum, file_basename(merc_center) , emission_image, continuum_reflectance_image2
-;
-;;compare the two images based on original scaling:
-;mx = max(continuum_reflectance_image) & mn = min(continuum_reflectance_image)
-;ctcheck = image(continuum_reflectance_image, rgb_table =13, layout =[2,2,1], title= range_factor)
-;ctcheck = image(continuum_reflectance_image2, max_value= mx, min_value=mn, rgb_table= 13, layout=[2,2,2], /current)
-;mx = max(continuum_reflectance_image2) & mn = min(continuum_reflectance_image2)
-;plot, final_observed_spectrum
-;vline, [continuum_start, continuum_end, continuum_start2, continuum_end2]
-;
-;
-;ctcheck = image(continuum_reflectance_image, max_value= mx, min_value=mn, rgb_table= 13, layout=[2,2,3], /current)
-;ctcheck = image(continuum_reflectance_image2, max_value= mx, min_value=mn, rgb_table= 13, layout=[2,2,4], /current)
-;-----------------------------------------------------------------------------------------------------------------------------------------
 
-;stop
 print, "make changes to bounds of continuum to see the effects in new image."
 
 

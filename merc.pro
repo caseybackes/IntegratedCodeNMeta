@@ -79,12 +79,9 @@
 
 pro merc, merc_center_image, SINGLE = single, CT_RANGE_FACTOR = ct_range_factor
 
-if !Version.os_family ne "Windows" then begin
-!null = dialog_message(["We need to find a way to get the cursor procedure to work", $
-                        "on the unix/MacOS platform. This is a known issue and a possible", $
-                        "solution for earlier versions of MacOS at ", $ 
-                        "http://www.harrisgeospatial.com/Support/HelpArticles/TabId/185/ArtMID/800/ArticleID/3947/3947.aspx"], /information)
-endif
+curdir = strsplit(file_dirname(merc_center_image), '\', /extract)
+while curdir[-1] ne "MercuryResearch" do curdir = curdir[0:-2]
+curdir = strjoin(curdir, '\')
 
 ;stop
 print, ""
@@ -96,16 +93,13 @@ print, ''
 
 ; get the observation date of the image
 ;obsdate = strmid(sxpar(headfits(merc_center_image.compress()), 'date-obs'), 0, 10)
-obsdate = strmid(sxpar(headfits(merc_center_image), 'date-obs'), 0, 10)
+obsdate = strmid(sxpar(headfits(strtrim(merc_center_image)), 'date-obs'), 0, 10)
 
 if not isa(obsdate) then obsdate = strmid(sxpar(headfits(merc_Center_IMAGE), 'date-new'), 0, 20)
 
 ; search for calibration params: 
-
-;if !Version.os_family eq "unix" then cal_folder = "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/calibration_params"  
-if !Version.os_family eq "unix" then cal_folder = "/MercuryResearch/IntegratedCodeNMeta/calibration_params"
-if !Version.os_family eq "Windows" then cal_folder = "C:\Users\Casey Backes\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\calibration_params"
-;serach for the observation date wihtin the calibrations folder removerows
+cal_folder = "C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\calibration_params"
+;serach for the observation date wihtin the calibrations folder 
 cals = file_search(cal_folder, '*'+string(obsdate)+'*')
 
 ;for older fits date formats that used the slashes format(ex: 06/06/94) : 
@@ -161,22 +155,24 @@ if cals.length eq 1 and cals ne '' then begin
   endif
     
   
-stop
+;stop
 endif
 print, "Calibration File:"
 print, file_basename(calibration_filepath)
 ;__________________________________________________________________________________________________________________________
 ;  for the north/south/center set of mercury observsations to be used as one image...
+
 if not keyword_set(single) then begin
-  stop
+  ;stop
   ; Find the best north and south images. 
   findpair3, merc_center_image, merc_north_image, /north
   findpair3, merc_center_image, merc_south_image, /south
-  stop
+  ;stop
   ; remove any spaces at the end of the filepath string (makes string compatible with readfits() and headfits() ) 
-  merc_center_image=merc_center_image.compress()
-  merc_south_image =merc_south_image.compress()
-  merc_north_image = merc_north_image.compress()
+  merc_center_image=strtrim(merc_center_image)
+  merc_south_image =strtrim(merc_south_image)
+  merc_north_image = strtrim(merc_north_image)
+
   
 
   print, ""
@@ -214,7 +210,7 @@ if not keyword_set(single) then begin
   print, "... done with center."
   print, ''
   print, ''
-  stop
+  ;stop
   ; ________________________
   ; Process North Image: 
   ; ________________________  
@@ -286,8 +282,7 @@ if not keyword_set(single) then begin
 
     ; An example of leading and trailing images: 
     case !Version.os_family of 
-      "unix": READ_JPEG, "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/mercphase_img.JPG", mercphase
-      "Windows": READ_JPEG, "\\lds\mascs_data\Ground_data\Casey\Mercury Processing\mercphase_img.JPG", mercphase
+      "Windows": READ_JPEG, "C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\mercphase_img.JPG", mercphase
     endcase
     check_correct_ns_labels = image(mercphase, /current, layout = [3,1,3])
     check_correct_ns_labels = image(reverse(mercphase, 2), /current, layout = [3,1,1])
@@ -300,10 +295,9 @@ if not keyword_set(single) then begin
     if strmatch(appearant_solar_position, '*l*') then appearant_solar_position = 'L'
     if strmatch(appearant_solar_position, '*t*') then appearant_solar_position = 'T'
     closewin
-    case !Version.os_family of
-      "unix": checkpoint_savefile = "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/hold last merc.sav"
-      "Windows": checkpoint_savefile ="\\lds\mascs_data\Ground_data\Casey\Mercury Processing\hold last merc.sav"
-    endcase 
+    
+
+    checkpoint_savefile =string(curdir +'\IntegratedCodeNMeta\'+ 'pre CandC checkpoint.sav')
     save, /variables, filename = checkpoint_savefile
 
    
@@ -346,18 +340,13 @@ while approvefinal ne 'y' do begin
     best_nco, best_sco, $ 
     final_ct_img,final_em_img ,final_model
  
- 
- 
- 
   !null = text(250,480, string("Center: " + string(file_basename(merc_center_image))), /device)
   !null = text(50, 5, "Updated with latest autostitch code", /device)
   !null = text(50, 60, string("N/C overlap: " + string(best_nco)), /device)
   !null = text(50, 45, string("S/C overlap: " + string(best_sco)), /device)
   !null = text(50, 30, string("Seeing: " + strmid(seeing,1,3)+'"'), /device)
   read, approvefinal, prompt = "Do you approve of final image? (y/n): "
-  if approvefinal ne 'y' and approvefinal ne '' then begin 
-    print, "Make any changes now. Enter '.c' when ready to continue."
-    stop,''
+
   endif 
   
 endwhile
@@ -467,95 +456,89 @@ ct = image_pixel_multiplier[0]*final_ct_img   ;|
   t = text(10,5, string( "Saved as: " + savefile_savename), /device, font_size = 7)
   
   
-endif else if keyword_set(single) then begin; findgen
+endif else if keyword_set(single) then begin
 ;________________________________________________________________________________________________________________
 ; For single images of mercury, usually the 10" slicer images
-stop
+  stop
   process_from_calibrations, merc_Center_image, calibration_filepath, rotation_required,$
     merc_reduced, center_ct, center_em, rows_autoremoved, rows_manuallyremoved
     
-    
-    
   ephem=ephemeris_structure
-  
-;  if not isa(delta_lambda_d2) then begin
-;    print, "Need a delta lambda range for the next convolution procedure."
-;    stop
-;  endif
+
   stop
 ;-----------------------------------
-good_compare = 'n'
-while good_compare eq 'n' do begin
-  print, "Ephemeris data lists the position WRT the sun as ",(ephem.slashr eq '/T' ? '"trailing:"':'"leading:"'),"."
-  ; Lets do a visual check on the data at this point. The stacked images should show a "north" on top and "south" below the "center".
-  check_correct_ns_labels = image(center_ct, layout= [3,1,2], rgb_table= 13, title= "Current Orientation")
-
-  ; An example of leading and trailing images:
-  case !Version.os_family of
-    "unix": READ_JPEG, "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/mercphase_img.JPG", mercphase
-    "Windows": READ_JPEG, "\\lds\mascs_data\Ground_data\Casey\Mercury Processing\mercphase_img.JPG", mercphase
-  endcase
-  !null = image(mercphase, /current, layout = [3,1,3])
-  !null = image(reverse(mercphase, 2), /current, layout = [3,1,1])
-  !null = text([40,466],[355,355],["EX: Trailing", "EX: Leading"], /device)
-  !null = text(50, 450, "Position WRT Sun:", /device, font_size = 15)
-  !null = text(50, 430, "Trailing or Leading? ", /device, font_size = 15)
-
-  appearant_solar_position= ''; as seen in the observation.
-  read, appearant_solar_position, prompt = "Does the observation appear to be (l)eading or (t)railing the sun? : "
-  if strmatch(appearant_solar_position, '*l*') then appearant_solar_position = 'L'
-  if strmatch(appearant_solar_position, '*t*') then appearant_solar_position = 'T'
+  good_compare = 'n'
+  while good_compare eq 'n' do begin
+    print, "Ephemeris data lists the position WRT the sun as ",(ephem.slashr eq '/T' ? '"trailing:"':'"leading:"'),"."
+    ; Lets do a visual check on the data at this point. The stacked images should show a "north" on top and "south" below the "center".
+    check_correct_ns_labels = image(center_ct, layout= [3,1,2], rgb_table= 13, title= "Current Orientation")
+  
+    ; An example of leading and trailing images:
+    case !Version.os_family of
+      "unix": READ_JPEG, "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/mercphase_img.JPG", mercphase
+      "Windows": READ_JPEG, "\\lds\mascs_data\Ground_data\Casey\Mercury Processing\mercphase_img.JPG", mercphase
+    endcase
+    !null = image(mercphase, /current, layout = [3,1,3])
+    !null = image(reverse(mercphase, 2), /current, layout = [3,1,1])
+    !null = text([40,466],[355,355],["EX: Trailing", "EX: Leading"], /device)
+    !null = text(50, 450, "Position WRT Sun:", /device, font_size = 15)
+    !null = text(50, 430, "Trailing or Leading? ", /device, font_size = 15)
+  
+    appearant_solar_position= ''; as seen in the observation.
+    read, appearant_solar_position, prompt = "Does the observation appear to be (l)eading or (t)railing the sun? : "
+    if strmatch(appearant_solar_position, '*l*') then appearant_solar_position = 'L'
+    if strmatch(appearant_solar_position, '*t*') then appearant_solar_position = 'T'
+    closewin
+    case !Version.os_family of
+      "unix": checkpoint_savefile = "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/hold last merc.sav"
+      "Windows": checkpoint_savefile ="\\lds\mascs_data\Ground_data\Casey\Mercury Processing\hold last merc.sav"
+    endcase
+    save, /variables, filename = checkpoint_savefile
+    print, "Checkpoint saved: ", checkpoint_savefile
+    ; For calculating the scaling factor to kR, we need to provide the convolve and compare code with the wavelength resolution from the image. 
+    delta_lambda = abs(corrected_observed_wavelength[d2_end]-corrected_observed_wavelength[d2_start])
+  
+    
+    
+    
+    convolve_and_compare3, $
+      ephemeris_structure, $      the structure that contains metadata for this observation geometry
+      center_ct, $                image of the center of mercury in a quiet continuum band
+      1.0, $                      angular height of one pixel row
+      appearant_solar_position, $ mercury as leading or trailing the sun, from observers perspective
+      delta_lambda, $             the spectral integration width for each remapped pixel (~0.1-0.2 Angstroms).
+      image_pixel_multiplier, $   the multiplicative constant that brings the observed image to values and units of kR
+      seeing, $                   the best estimate for the effective seeing in the center continuum observation                        imcenter_offset, eq_slice_pos
+      model_img, $                10x10 image array of model, blurred with best estimate of observed seeing centered on disk.
+      ;full_model_img, $           256x256 image array of model, blurred with best estimate of observed seeing.
+      normalization_factor, $     multiplicative value bringing observation to intensity of the model.
+      imcenter_offset, $          the distance in the full size model from the center of the image array to the brightest pixel
+      eq_slice_array, $           the array of the equitorial slice - used to identify the center in composite images
+      eq_slice_pos;               pixel row in center continuum image that was chosen to be the equitorial pixel row.
+    ;                             Since the model and observation equitorial pixel rows are shifted to match intensity locations,
+    ;                             this determined distance is taken to be the same between the two images. EX: the peak equitorial intensity
+    ;                             of the model lies (say at ) 4 pixels from the center of the theoretical disk. When the peak intensity of the
+    ;                             observation is put in the same place and the seeing is estimated, then the center of the simulated disk can
+    ;                             reasonably be taken as the center of the observed disk.
+    read, good_compare, prompt = "Satisfied with model building and seeing estimate? : (y/n)"
+  
+  endwhile
   closewin
-  case !Version.os_family of
-    "unix": checkpoint_savefile = "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/hold last merc.sav"
-    "Windows": checkpoint_savefile ="\\lds\mascs_data\Ground_data\Casey\Mercury Processing\hold last merc.sav"
-  endcase
+
+
+  ;-------------Final Image Products-------------
+  ; The image pixel multiplier simply puts "counts" or "reduced ADU"
+  ; into values and units of kiloreyleighs.
+  ; (for some reason, the image pixel multiplier is an array of length 1, so we extract it
+  ; and essentially make it a float-type value.
+  
+  d2 = image_pixel_multiplier[0]*center_ct   ;|
+  ct = image_pixel_multiplier[0]*center_em   ;|
+  ;----------------------------------------------
+  
   save, /variables, filename = checkpoint_savefile
-  print, "Checkpoint saved: ", checkpoint_savefile
-  ; For calculating the scaling factor to kR, we need to provide the convolve and compare code with the wavelength resolution from the image. 
-  delta_lambda = abs(corrected_observed_wavelength[d2_end]-corrected_observed_wavelength[d2_start])
-
-  
-  
-  
-  convolve_and_compare3, $
-    ephemeris_structure, $      the structure that contains metadata for this observation geometry
-    center_ct, $                image of the center of mercury in a quiet continuum band
-    1.0, $                      angular height of one pixel row
-    appearant_solar_position, $ mercury as leading or trailing the sun, from observers perspective
-    delta_lambda, $             the spectral integration width for each remapped pixel (~0.1-0.2 Angstroms).
-    image_pixel_multiplier, $   the multiplicative constant that brings the observed image to values and units of kR
-    seeing, $                   the best estimate for the effective seeing in the center continuum observation                        imcenter_offset, eq_slice_pos
-    model_img, $                10x10 image array of model, blurred with best estimate of observed seeing centered on disk.
-    ;full_model_img, $           256x256 image array of model, blurred with best estimate of observed seeing.
-    normalization_factor, $     multiplicative value bringing observation to intensity of the model.
-    imcenter_offset, $          the distance in the full size model from the center of the image array to the brightest pixel
-    eq_slice_array, $           the array of the equitorial slice - used to identify the center in composite images
-    eq_slice_pos;               pixel row in center continuum image that was chosen to be the equitorial pixel row.
-  ;                             Since the model and observation equitorial pixel rows are shifted to match intensity locations,
-  ;                             this determined distance is taken to be the same between the two images. EX: the peak equitorial intensity
-  ;                             of the model lies (say at ) 4 pixels from the center of the theoretical disk. When the peak intensity of the
-  ;                             observation is put in the same place and the seeing is estimated, then the center of the simulated disk can
-  ;                             reasonably be taken as the center of the observed disk.
-  read, good_compare, prompt = "Satisfied with model building and seeing estimate? : (y/n)"
-
-endwhile
-closewin
-
-
-;-------------Final Image Products-------------
-; The image pixel multiplier simply puts "counts" or "reduced ADU"
-; into values and units of kiloreyleighs.
-; (for some reason, the image pixel multiplier is an array of length 1, so we extract it
-; and essentially make it a float-type value.
-
-d2 = image_pixel_multiplier[0]*center_ct   ;|
-ct = image_pixel_multiplier[0]*center_em   ;|
-;----------------------------------------------
-
-save, /variables, filename = checkpoint_savefile
-print, "Check point Saved! Restore the .sav file:",checkpoint_savefile
-stop
+  print, "Check point Saved! Restore the .sav file:",checkpoint_savefile
+  stop
 
 ;------------------------------------
 ; Make a nifty JPG file for the final images and include some nifty ephemeris data. 
@@ -591,16 +574,10 @@ stop
     curhr+'h'+curmn+'m'+cursc+'s ')
   
   
-  case !Version.os_family of 
-    "Windows": begin 
-                  img_savename = "\\lds\mascs_data\Ground_data\Casey\Mercury Processing\MercPipeline Results\Completed Pipeline Products (after 9 Aug 2016)\Images\"+obsdate + fname +' @'+m+".jpg"
-                  savefile_savename ="\\lds\mascs_data\Ground_data\Casey\Mercury Processing\MercPipeline Results\Completed Pipeline Products (after 9 Aug 2016)\IDLSaveFiles\"+obsdate + fname +' @'+m+".sav"
-               end
-    "unix": begin 
-                  img_savename = '/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/MercPipeline Results/Completed Pipeline Products (after 9 Aug 2016)/Images/'+obsdate + fname +' @'+m+".jpg"
-                  savefile_savename = '/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/MercPipeline Results/Completed Pipeline Products (after 9 Aug 2016)/IDLSaveFiles/'+obsdate + fname +' @'+m+".sav"
-            end
-  endcase
+
+  img_savename = string(curdir + '\IntegratedCodeNMeta\Completed Pipeline Products\Images\' +obsdate +' '+ fname +' @'+m+".jpg")
+  savefile_savename = string(curdir + '\IntegratedCodeNMeta\Completed Pipeline Products\IDLSaveFiles\'+obsdate+' ' + fname +' @'+m+".sav")
+            
 
   closewin
   w1 = window(dimensions = [800,700])
@@ -643,7 +620,6 @@ endif
 save, /variables, filename = savefile_savename
 print, "Data saved at :"
 print, savefile_savename
-;stop
 rf.title= "Continuum"
 em.title= "NaD2 Emission"
 em.save, img_savename
@@ -657,12 +633,7 @@ print, "Calibration used on this image:"
 print, calibration_filepath
 print, 'COMPLETE'
 
-
-
 return
-
-
-
 
 end
 

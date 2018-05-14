@@ -8,7 +8,6 @@ pro process_from_calibrations, merc_img_name, calibration_filepath, rotation_req
   fitless_name =file_basename(merc_img_name)
   fitless_name =fitless_name.replace(".fit", '')
   restore, calibration_filepath;, restored_objects = rest_objs
-  ;stop, merc_img_name
   merc_img_name = orig_name
   ;stop, merc_img_name
   ; restoring the calibrations after having been saved with new slice indices (later in this code)
@@ -216,7 +215,7 @@ closewin
      man_imbuild2, trimmed_merc_image, $
       slice_indices, d2_start, d2_end, continuum_start, continuum_end, $
       final_solar_spectrum, file_basename(merc_img_name) ,$
-       emission_image, continuum_reflectance_image, /showplots
+       emission_image, continuum_reflectance_image;, /showplots
   endif else begin
     
     

@@ -5,9 +5,8 @@
 ;  without using a dark frame. 
 ;-
 function dark_reduce3, merc_center
-;sometimes the filename has a space at the end of the string. READFITS and HEADFITS
-;cant access the file unless the space at the end of the string is removed -> basically ".fits " not equal to ".fits"
-merc_center = merc_center
+  ;sometimes the filename has a space at the end of the string. READFITS and HEADFITS
+  ;cant access the file unless the space at the end of the string is removed -> basically ".fits " not equal to ".fits"
   !null = readfits(merc_center, hdr, /silent)
   size_of_image_x = sxpar(hdr, 'naxis1')
   size_of_image_y = sxpar(hdr, 'naxis2')
