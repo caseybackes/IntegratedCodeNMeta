@@ -65,6 +65,11 @@
 pro singlemercproc, merc_center, $
   continuum_reflectance_image, emission_image, pos_savefile_name, SINGLE=single
 
+home = file_dirname(merc_center)
+
+cd, home
+stop
+
 dark_array = dark_reduce3(merc_center)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;       
 
@@ -105,6 +110,8 @@ case !Version.os_family of
   "Windows": pos_savefile_name = string('C:\Users\Casey Backes\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\calibration_params\processing calibrations for ' +  merc_timestamp + ' created on '+ m +'.sav')
   "unix":    pos_savefile_name = string('/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/calibration_params/processing calibrations for '+  merc_timestamp + ' created on '+ m +'.sav')  
 endcase
+psn = file_which('merc.pro')
+psn2 = strsplit(psn, '\', /extract)
 
 if isa(rotation_required) eq 0 then rotation_required = 0
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
