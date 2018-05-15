@@ -281,9 +281,7 @@ if not keyword_set(single) then begin
     check_correct_ns_labels = image([[south_ct],[center_ct],[north_ct]], layout= [1,1,1], rgb_table= 13, title= "Current Plancement")
 
     ; An example of leading and trailing images: 
-    case !Version.os_family of 
-      "Windows": READ_JPEG, "C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\mercphase_img.JPG", mercphase
-    endcase
+      READ_JPEG, string(curdir) +"\IntegratedCodeNMeta\mercphase_img.JPG", mercphase
     check_correct_ns_labels = image(mercphase, /current, layout = [3,1,3])
     check_correct_ns_labels = image(reverse(mercphase, 2), /current, layout = [3,1,1])
     !null = text([40,466],[355,355],["EX: Trailing", "EX: Leading"], /device)
@@ -347,7 +345,6 @@ while approvefinal ne 'y' do begin
   !null = text(50, 30, string("Seeing: " + strmid(seeing,1,3)+'"'), /device)
   read, approvefinal, prompt = "Do you approve of final image? (y/n): "
 
-  endif 
   
 endwhile
 save, /variables, filename= checkpoint_savefile
@@ -406,17 +403,9 @@ ct = image_pixel_multiplier[0]*final_ct_img   ;|
     string(today[2])+' - '+$
     curhr+'h'+curmn+'m'+cursc+'s ')
   
-  
-  case !Version.os_family of 
-    "Windows": begin 
-                  img_savename = "\\lds\mascs_data\Ground_data\Casey\Mercury Processing\MercPipeline Results\Completed Pipeline Products (after 9 Aug 2016)\Images\"+obsdate + fname +' @'+m+".jpg"
-                  savefile_savename ="\\lds\mascs_data\Ground_data\Casey\Mercury Processing\MercPipeline Results\Completed Pipeline Products (after 9 Aug 2016)\IDLSaveFiles\"+obsdate + fname +' @'+m+".sav"
-               end
-    "unix": begin 
-                  img_savename = '/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/MercPipeline Results/Completed Pipeline Products (after 9 Aug 2016)/Images/'+obsdate + fname +' @'+m+".jpg"
-                  savefile_savename = '/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/MercPipeline Results/Completed Pipeline Products (after 9 Aug 2016)/IDLSaveFiles/'+obsdate + fname +' @'+m+".sav"
-            end
-  endcase
+  img_savename = string(curdir + '\IntegratedCodeNMeta\Completed Pipeline Products\Images\' +obsdate +' '+ fname +' @'+m+".jpg")
+  savefile_savename = string(curdir + '\IntegratedCodeNMeta\Completed Pipeline Products\IDLSaveFiles\'+obsdate+' ' + fname +' @'+m+".sav")
+        
 
   closewin
   w1 = window(dimensions = [800,700])
@@ -449,13 +438,13 @@ ct = image_pixel_multiplier[0]*final_ct_img   ;|
   t = text(510, 380, string("   True Anomoly  :   "+strmid(strcompress(ta),1,5)+"$\deg$"), /device)
   t = text(510, 360, string("   Solar Range:   "+strmid(r,0,5)+" AU"), /device)
   t = text(510, 340, string("   Pos WRT Sun(NASA): " + (rel_sol_pos )), /device)
-  t = text(510, 310, string("Max D2 Measured: "+ strcompress(round(max(d2)/10.)*10)+'kR'), /device)
+  t = text(510, 310, string("Max D2 Measured: "+ string(sigfig(max(d2)/1E10,5))+' e10 kR'), /device)
   
 
   t = text(10,20, string("Calibrated from : " + file_basename(calibration_filepath)), /device, font_size = 7)
   t = text(10,5, string( "Saved as: " + savefile_savename), /device, font_size = 7)
   
-  
+stop  
 endif else if keyword_set(single) then begin
 ;________________________________________________________________________________________________________________
 ; For single images of mercury, usually the 10" slicer images
@@ -474,10 +463,8 @@ endif else if keyword_set(single) then begin
     check_correct_ns_labels = image(center_ct, layout= [3,1,2], rgb_table= 13, title= "Current Orientation")
   
     ; An example of leading and trailing images:
-    case !Version.os_family of
-      "unix": READ_JPEG, "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/mercphase_img.JPG", mercphase
-      "Windows": READ_JPEG, "\\lds\mascs_data\Ground_data\Casey\Mercury Processing\mercphase_img.JPG", mercphase
-    endcase
+    READ_JPEG, string(curdir) +"IntegratedCodeNMeta\mercphase_img.JPG", mercphase
+
     !null = image(mercphase, /current, layout = [3,1,3])
     !null = image(reverse(mercphase, 2), /current, layout = [3,1,1])
     !null = text([40,466],[355,355],["EX: Trailing", "EX: Leading"], /device)
@@ -489,10 +476,8 @@ endif else if keyword_set(single) then begin
     if strmatch(appearant_solar_position, '*l*') then appearant_solar_position = 'L'
     if strmatch(appearant_solar_position, '*t*') then appearant_solar_position = 'T'
     closewin
-    case !Version.os_family of
-      "unix": checkpoint_savefile = "/Volumes/mascs_data/Ground_data/Casey/Mercury Processing/hold last merc.sav"
-      "Windows": checkpoint_savefile ="\\lds\mascs_data\Ground_data\Casey\Mercury Processing\hold last merc.sav"
-    endcase
+    checkpoint_savefile =string(curdir +'\IntegratedCodeNMeta\'+ 'pre CandC checkpoint.sav')
+
     save, /variables, filename = checkpoint_savefile
     print, "Checkpoint saved: ", checkpoint_savefile
     ; For calculating the scaling factor to kR, we need to provide the convolve and compare code with the wavelength resolution from the image. 
@@ -608,7 +593,7 @@ endif else if keyword_set(single) then begin
   t = text(510, 380, string("   True Anomoly  :   "+strmid(strcompress(ta),1,5)+"$\deg$"), /device)
   t = text(510, 360, string("   Solar Range:   "+strmid(r,0,5)+" AU"), /device)
   t = text(510, 340, string("   Pos WRT Sun(NASA): " + (rel_sol_pos )), /device)
-  t = text(510, 310, string("Max D2 Measured: "+ strcompress(round(max(d2)/10.)*10)+'kR'), /device)
+  t = text(510, 310, string("Max D2 Measured: "+ string(sigfig(max(d2)/1E10,5))+' e10 kR'), /device)
   
 
   t = text(10,20, string("Calibrated from : " + file_basename(calibration_filepath)), /device, font_size = 7)
