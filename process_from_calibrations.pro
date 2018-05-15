@@ -7,15 +7,15 @@ pro process_from_calibrations, merc_img_name, calibration_filepath, rotation_req
   ;-----------------------------------------------------------------
   fitless_name =file_basename(merc_img_name)
   fitless_name =fitless_name.replace(".fit", '')
-  restore, calibration_filepath;, restored_objects = rest_objs
+  restore, calibration_filepath
   merc_img_name = orig_name
-  ;stop, merc_img_name
+
   ; restoring the calibrations after having been saved with new slice indices (later in this code)
   ; saves what the last image was that used this code. in the merc.pro code, that is the north image.
   ; so we simply remind IDL what image we orignally passed into this procedure, and that it isnt what was saved merc
   ; from saving all variables last time this code was run. 
-  !null = readfits(merc_img_name, hdr, /silent)
-  ;stop
+  ;!null = readfits(merc_img_name, hdr, /silent)
+  
 
   if isa(observation_date) eq 0 then begin 
     es = ephemeris_structure.DATE_OBS 
@@ -56,11 +56,12 @@ pro process_from_calibrations, merc_img_name, calibration_filepath, rotation_req
   s =size(readfits(merc_img_name, /silent))
   sx = s[1] & sy = s[2]
   if total(dark_array.dim eq [sx,sy]) ne 2 then dark_array = !null
-  darkNflat2, merc_img_name, dark_array, $  ; input
-    merc_bright, sky_raw_img, sky_bright, sky_raw_name, merc_reduced, merc_timestamp, rotation_required
   ;stop
+;  darkNflat2, merc_img_name, dark_array, $  ; input
+;    merc_bright, sky_raw_img, sky_bright, sky_raw_name, merc_reduced, merc_timestamp, rotation_required
+  batch_dark_rot, merc_img_name, dark_array, $  ; input
+    merc_bright, sky_raw_img, sky_bright, sky_center, merc_reduced, merc_timestamp, rotation_required, SINGLE=single; output
 
-  
 ;stop
   ;-----------------------------------------------------------------
   ;Step 3: Registration.
@@ -76,25 +77,10 @@ pro process_from_calibrations, merc_img_name, calibration_filepath, rotation_req
   merc_minus_sky = merc_bright*1.0 - sky_bright*1.0
   ;now we have a good merc image that needs to be reg'd
   merc_minus_sky_regd = warp_tri(xo, yo, xi, yi, merc_minus_sky)
-  if median(merc_minus_sky_regd eq merc_minus_sky) eq 0 then print, "Image is registered"
-  ;stop
-  ;we need a flat field built from a reg'd sky image
   sky_regd= warp_tri(xo, yo, xi, yi, sky_bright)
-  sky_summed_over_spectra=transpose(mean(sky_regd, dim=1))
-  flat_field_array=sky_summed_over_spectra
-  flat_field_array[where(flat_field_array eq 0)] = 1
-  sky_summed_over_spectra[where(sky_summed_over_spectra eq 0)] = 1
-  size=merc_minus_sky.dim
-  x_size=size[0]
-  ;print, "Building flat field from registered sky image..."
-  for k=1,x_size-1 do flat_field_array=[flat_field_array,sky_summed_over_spectra]
 
-  ; divide by the flat field
-  merc_reduced_o = merc_minus_sky_regd*1.0/flat_field_array*1.0 ;  'o' means original
-  ;print, "Image is now flat and registered..."
+  merc_reduced_o =  flatfield(merc_minus_sky_regd,sky_regd) 
   atv, merc_reduced_o
-  ;print, "check for proper registration to square image"
-  ;stop
   ;-----------------------------------------------------------------
   ;Step 3b: Slice Gap removal.
   ;-----------------------------------------------------------------
@@ -127,10 +113,7 @@ pro process_from_calibrations, merc_img_name, calibration_filepath, rotation_req
 ;  endif ; total(strmatch(rows_manuallyremoved, 'none')) eq 0 
 ;  endif
   merc_reduced = merc_copy ; which reflects any and all slice gap removal done to the image
-  ;atv, merc_reduced
-  
-  
-
+;atv, merc_reduced
 ;  ; if there exists rows to be removed from this image, 'rows_auto_removed' or 'rows_manually_removed'
 ;  ; then remove them from this image and check the image to see the result. It is possible that the image will
 ;  ; drift across the CCD during an observing run (I've seen this in the data). So removing the rows 
@@ -165,7 +148,6 @@ pro process_from_calibrations, merc_img_name, calibration_filepath, rotation_req
 ;  ask_keep_new_gapless_image = ''
 ;  read, ask_keep_new_gapless_image, prompt = 'Keep the new "gapless" image moving forward?  '
 ;  if ask_keep_new_gapless_image eq 'y' OR ask_keep_new_gapless_image eq '' then  merc_regd_gapless
-  
 ;print, "In this window, we can adjust the slice boundaries used in the pixel remapping process. "
 ;print, "Click near a real boundary (local minima) to move the closest slice index (vertical line) to that minima. " 
 ;slice_adjust, merc_reduced, slice_indices 
@@ -184,16 +166,12 @@ pro process_from_calibrations, merc_img_name, calibration_filepath, rotation_req
 
 
 
-  
-  ;print, "slice indices: "
-  ;print, slice_indices
- 
+
   ;-----------------------------------------------------------------
   ;Step 4: Observed spectrum of this image.
   ;-----------------------------------------------------------------
   observed_spectrum =  mean(merc_reduced[*,slice_indices[0]:slice_indices[-1]], dim = 2); this will work even if slice boundaries were manually chosen
   size_of_observed_spectrum = observed_spectrum.length
-;stop
   ;-----------------------------------------------------------------
   ;Step 5: Match spectral limits between mercury and solar spectra.
   ;-----------------------------------------------------------------
@@ -209,7 +187,6 @@ closewin
   ;-----------------------------------------------------------------
   ;Step 6: Remapping to spatial image.
   ;-----------------------------------------------------------------
-;  stop
   if not keyword_set(ct_range_factor) then ct_range_factor =1.0
   if (ct_range_factor eq 1.0) then begin
      man_imbuild2, trimmed_merc_image, $
@@ -226,5 +203,4 @@ closewin
 
     
   endelse
-  ;stop
 end

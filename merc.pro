@@ -167,45 +167,26 @@ if not keyword_set(single) then begin
   ; Find the best north and south images. 
   findpair3, merc_center_image, merc_north_image, /north
   findpair3, merc_center_image, merc_south_image, /south
-  ;stop
+
   ; remove any spaces at the end of the filepath string (makes string compatible with readfits() and headfits() ) 
   merc_center_image=strtrim(merc_center_image)
   merc_south_image =strtrim(merc_south_image)
   merc_north_image = strtrim(merc_north_image)
 
   
-
-  print, ""
-  print, "INSTRUCTIONS -"
-  print, "Ensure good files are chosen for the north, south and sky flats. "
-  print, "Usually they will have a close range of indices, and need to have "
-  print, "some signal that the file being used for 'north' is indeed a north "
-  print, "hemisphere observation. Same for the south image. Be careful to check "
-  print, "for 'mercsw-xxa.fits' where this would be a southwest image, not a south."
-  
-  print, ''
-  Print, "Check the images in the set. They may be mislabed or incorrectly-selected by the autmation. "
-  print, "For instance, to change the south image:
-  print, "IDL> merc_south_image = filpath to better image
-  print, ''
-  print, "If you want to see a 'chronology' to help decide if the chosen files are the best, use :"
-  print, '        IDL> chrono2, merc_center_image, /printout, [/saveme - to save output to CSV] '
-  print, ''
-
   print, '-----------------------------------------------------------------'
   print, "north: ", file_basename(merc_north_image)
   print, "center: ", file_basename(merc_center_image)
   print, "south: ", file_basename(merc_south_image) 
   print, '-----------------------------------------------------------------'
 
-  ;stop;" .c to continue" ; chrono2
   
   ; _______________________________
   ; Process / Restore Center Image:
   ; _______________________________
   restore, calibration_filepath
   print, "Processing center image..."
-  if not isa(center_ct) then process_from_calibrations, merc_center_image, calibration_filepath, rotation_required,ct_range_factor=ct_range_factor, $
+  if isa(center_ct) eq 0 then process_from_calibrations, merc_center_image, calibration_filepath, rotation_required,ct_range_factor=ct_range_factor, $
     merc_c_reduced, center_ct, center_em, ROWS_AUTOREMOVED, ROWS_MANUALLYREMOVED
   print, "... done with center."
   print, ''
@@ -221,7 +202,7 @@ if not keyword_set(single) then begin
     print, "... done with north."
     print, ''
     print, ''
-
+    stop
     
   ; ________________________
   ; Process South Image:
@@ -234,10 +215,6 @@ if not keyword_set(single) then begin
     print, ''
     print, ''    
 
-
-  
-  
-  
   ; __________________________________________
   ; Correct north/south labeling and placement:
   ; __________________________________________
@@ -262,28 +239,19 @@ if not keyword_set(single) then begin
   
   ; Check that the Delta lambda value is set, it is critical for the convolve_and_compare code to give
   ; a final scaling value. 
-  if not isa(delta_lambda) then delta_lambda = delta_lambda_ct 
-  ; if for some wild reason delta lambda ct didnt come with the restored variables, then simply calculate it from 
-  ; the array "corrected observed wavelength". 
-  if not isa(delta_lambda) then begin 
-    print, "Auto calculating delta_lambda value from difference between two adjacent values in the corrected_observed_wavelength array..."
-    delta_lambda = abs(corrected_observed_wavelength[d2_end]-corrected_observed_wavelength[d2_start])
-    ; delta lambda should be somewhere around 0.13 to 0.18 (Angstroms)
-    print, "Calculated delta lambda value of ", delta_lambda, '. Check it. '
-;    wait, 1
-  ENDIF
-
+  if not isa(delta_lambda) then delta_lambda = abs(corrected_observed_wavelength[d2_end]-corrected_observed_wavelength[d2_start])
+ 
 
   good_compare = 'n'
   while good_compare eq 'n' do begin
     print, "Ephemeris data lists the position WRT the sun as ",(ephem.slashr eq '/T' ? '"trailing:"':'"leading:"'),"." 
     ; Lets do a visual check on the data at this point. The stacked images should show a "north" on top and "south" below the "center".
-    check_correct_ns_labels = image([[south_ct],[center_ct],[north_ct]], layout= [1,1,1], rgb_table= 13, title= "Current Plancement")
+    check_correct_ns_labels = image([[south_ct],[center_ct],[north_ct]], layout= [1,1,1], rgb_table= 13, title= "Current Image Identification")
 
     ; An example of leading and trailing images: 
       READ_JPEG, string(curdir) +"\IntegratedCodeNMeta\mercphase_img.JPG", mercphase
-    check_correct_ns_labels = image(mercphase, /current, layout = [3,1,3])
-    check_correct_ns_labels = image(reverse(mercphase, 2), /current, layout = [3,1,1])
+    check_correct_ns_labels1 = image(mercphase, /current, layout = [3,1,3])
+    check_correct_ns_labels2 = image(reverse(mercphase, 2), /current, layout = [3,1,1])
     !null = text([40,466],[355,355],["EX: Trailing", "EX: Leading"], /device)
     !null = text(50, 450, "Position WRT Sun:", /device, font_size = 15)
     !null = text(50, 430, "Trailing or Leading? ", /device, font_size = 15)
@@ -619,6 +587,9 @@ print, calibration_filepath
 print, 'COMPLETE'
 
 return
+
+
+
 
 end
 

@@ -468,9 +468,6 @@ print, "Imcenter offset value: ",imcenter_offset
 !null = image(continuum_reflectance_image, rgb_table = 13, layout = [2,1,2], title = "observation", /current)
 ;!null = image(tstim[128+imcenter_offset-5:128+imcenter_offset+4, 128-5-(eq_slice_pos - 5):128+4-(eq_slice_pos - 5) ], rgb_table= 13, layout= [1,1,1])
 
-
-
-
 closewin
   ;closewin
   ; find the best fitting model and derive the best estimate for the seeing condintions in this observation
@@ -492,7 +489,7 @@ closewin
   normalization_factor = normalization_factors[optimal_index] & normalization_factor=normalization_factor[0]
   
   image_pixel_multiplier = bestscale* (continuum_solar_flux_at_mercury ) * delta_lambda *4.0*!pi*1.0e-9
-  for x =optimal_index - 3 , optimal_index + 3 do print, round(rs[x]), seeing_array[x], (x eq optimal_index) ? " <-- best seeing" : ''
+  for x =optimal_index - 1 , optimal_index + 1 do print, round(rs[x]), seeing_array[x], (x eq optimal_index) ? " <-- best seeing" : ''
 
   return
 

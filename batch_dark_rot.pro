@@ -1,21 +1,11 @@
 pro batch_dark_rot, merc_center, dark_array, $  ; input
   merc_bright, sky_raw_img, sky_bright, sky_center, merc_reduced, merc_timestamp, rotation_required, SINGLE=single; output
-  ;;; Batch 
-  ; find the sky for the center
 
+  ; Find and read image files
   findpair3, merc_center, sky_center, /sky
   sky_raw_img = readfits(sky_center, /silent)
-  ;check the file names
-  print, "Merc image: ", file_basename(merc_center)
-  print, "Sky image: ", file_basename(sky_center)
-
-  ; RENAME THE BASE DIRECTORY TO THAT OF THE CENTER FILE!!
-  base_directory = file_dirname(merc_center)
-
   merc_raw = 1.0*readfits(merc_center, center_header, /silent)
   sky_raw = 1.0*readfits(sky_center, sky_header, /silent)
-
-
 
 
   ;determine the new fits formatted date of the mercury file
@@ -33,6 +23,7 @@ pro batch_dark_rot, merc_center, dark_array, $  ; input
     merc_timestamp = string('19'+yr + '-' +month+ '-' +day )
     merc_timestamp = merc_timestamp
   endif
+  ;stop
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ; 2) Dark and sky reduction from merc img
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -49,12 +40,6 @@ pro batch_dark_rot, merc_center, dark_array, $  ; input
   ; subtract the sky from the image
   merc_reduced = merc_bright*1.0 - sky_bright*1.0
   ;___________________________________________________________
-
-
-
-
-
-
 
 
   ;____________________________________________________________
@@ -77,8 +62,7 @@ pro batch_dark_rot, merc_center, dark_array, $  ; input
     nth-=nthsky
 
     merc_c_img = readfits(merc_center)
-    nth_contrast = [median(nth), max(nth)]
-    ;nth_contrast = nth_contrast(sort(nth_contrast))
+    
     ;start showing rotated images:
     while not strmatch(good_rotation,'y')  do begin
       ;___________________________________________________________

@@ -3,7 +3,7 @@
 pro findpair3, known_file, unknown_file, min_delta_t,SKY_FILE =sky, NORTH_FILE= north, SOUTH_FILE= south, EAST = east, WEST = west, FLAT=flat
   ; searches the directory of a known observation file, and searches for the closest (in time) file
   ; that contains a string. Stores the full path to the matching file in the unknown_file variable
-  ;stop
+
   ; determine the relevant directory
   known_file = strtrim(known_file)
   directory = file_dirname(known_file)
@@ -100,7 +100,7 @@ pro findpair3, known_file, unknown_file, min_delta_t,SKY_FILE =sky, NORTH_FILE= 
     ;print, "flats after remove procedure: ",unknown_files
   endif
 
-  removecopy, directory
+  ;removecopy, directory
   
 
   ;stop

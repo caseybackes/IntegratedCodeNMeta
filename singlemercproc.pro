@@ -110,7 +110,7 @@ m = string(string(today[4])+'-'+$
    string(today[2])+' @'+$
    curhr+'h'+curmn+'m'+cursc+'s ')
 pos_savefile_name = string(curdir + "\IntegratedCodeNMeta\calibration_params\processing calibrations for " +  merc_timestamp + ' created on '+ m +'.sav')
-stop
+;
 
 
 if isa(rotation_required) eq 0 then rotation_required = 0
@@ -120,7 +120,7 @@ if isa(rotation_required) eq 0 then rotation_required = 0
 ;   SHEAR_MATRIX: 4x4 matrix, each of the four row vectors is an input for the warp_tri function
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
+;stop
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeSmartslice.sav'
 imreg_y, merc_bright, merc_regd, shear_matrix
 xi = shear_matrix[*,2] &   xo = shear_matrix[*,0]  & yi = shear_matrix[*,3]   &  yo = shear_matrix[*,1]
@@ -133,67 +133,19 @@ sky_regd = warp_tri(xo,yo,xi,yi,sky_bright)
 
 
 merc_reduced = flatfield(merc_regd,sky_regd)
+stop
 
 
-; ALPHA TESTING***************
 smartslice, merc_reduced, slice_width, slice_indices
-merc_reduced[*,0:slice_indices[0]] = 0
-merc_reduced[*,slice_indices[-1]:*]=0
+;merc_reduced[*,0:slice_indices[0]] = 0
+;merc_reduced[*,slice_indices[-1]:*]=0
 atv, merc_reduced
 
+stop
 
-;/ALPHA TESTING***************
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsAfterSmartslice.sav'
 imreg_x, merc_reduced, slice_indices, merc_reduced, transformation_matrix
-;; *** OBSOLETE: REGISTRATION OF THE CLEAN MERCURY IMAGE 
-;; Align the slices and spectra to be perfectly horizontal and vertical, respectively. The returned 'shear matrix'
-;; can then be applied to the 'warp_tri' function to subsequently register the periphreal images.  
-;;*** Note: register5.pro is now obsolete with the implementation of 'image_registration.pro'
-;;;;register5, merc_reduced, slice_indices, merc_regd, shear_matrix
 
-;;image_registration, merc_reduced, slice_indices, sheared_img, trans_matrix
-;stop
-;; separate the registration maxtrix into vectors.
-;xi = shear_matrix[*,2] &   xo = shear_matrix[*,0]  & yi = shear_matrix[*,3]   &  yo = shear_matrix[*,1]
-;; if the image required nothing for registration (original data was aligned on CCD very well), then we can skip the 
-;; application of the shear matrix to the images. Programmatically, we can test for this change if the x_i and x_o arrays are
-;; identical and if the y_i, y_o arrays are also identical. This indicates that there is no coordinate transformation ("shearing"). 
-;if not total(xi eq xo) eq 4 and total(yi eq yo) eq 4 then begin 
-;
-;  ; Register the raw merc and sky images, then do the subtraction, then make a flat field, then divide by flat field. 
-;  merc_minus_sky = merc_bright - sky_bright
-;  ;now we have a good merc image that needs to be reg'd 
-;  merc_minus_sky_regd = warp_tri(xo, yo, xi, yi, merc_minus_sky)
-;  
-;  ;we need a flat field built from a REG'D sky image! (much nicer than not reg'd!! ) 
-;  sky_regd= warp_tri(xo, yo, xi, yi, sky_bright) ; that's sky minus the dark frame. 
-;  sky_summed_over_spectra=transpose(mean(sky_regd, dim=1)); now a column vector...
-;  flat_field_array=sky_summed_over_spectra
-;  size=merc_minus_sky.dim
-;  x_size=size[0]
-;  
-;  ; We now take this column vector and replicate it for as many columns there are in the image. 
-;  for k=1,x_size-1 do flat_field_array=[flat_field_array,sky_summed_over_spectra]
-;  
-;  ; Since we are using the registered version of the images, there could be rows of 0's on the bottom or top of the
-;  ; reduced image. In this case, the sum across the sky image at the bottom row will be zero and when we divide by 
-;  ; the flat field array we will get an infinate array ( or div by 0 error, which are basically the same thing). So anywhere 
-;  ; in the FFA there is a 0, we change it to be a 1.0. 
-;  flat_field_array[where(flat_field_array eq 0)] = 1.0
-;  ; divide by the flat field
-;  merc_regd = merc_minus_sky_regd/flat_field_array ; this is why we cant have zeros in the flat field array. 
-;  closewin
-;  merc_reduced1 = merc_regd
-;  ;atv, merc_regd
-;
-;  ; If registration was required, then we have to redefine the slice boundaries.  
-;  slicebounds, merc_reduced1, slice_indices
-;  slice_indices = slice_indices[sort(slice_indices)]
-;endif else begin
-;  merc_reduced1 = merc_regd
-;  sky_regd = sky_bright ; <- which is the sky image minus the dark, if a dark frame was available. 
-;endelse
-;            
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 5) Determine the wavelength values for pixels of the registered image.
@@ -202,8 +154,6 @@ imreg_x, merc_reduced, slice_indices, merc_reduced, transformation_matrix
 ;   
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-;stop
 
 ;; Some images have crazy gaps between the image slices (possibly due to a less than perfect columnation of the slicer
 ;; and spectrograph). Repsonding positively to the following prompt will intiate an auto gap removal process
@@ -382,16 +332,9 @@ delta_lambda_ct= abs((CONTINUUM_END-CONTINUUM_START) * dl)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; 8) Remapping of spectral image to 2D map of sodium distrobution 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-man_imbuild2, trimmed_merc_image, slice_indices, $
-  d2_start, d2_end, CONTINUUM_START, CONTINUUM_END, $
-  final_solar_spectrum, file_basename(merc_center) , emission_image, continuum_reflectance_image;, /showplots
+man_imbuild2, trimmed_merc_image, slice_indices,d2_start, d2_end, CONTINUUM_START, CONTINUUM_END, final_solar_spectrum, file_basename(merc_center) , emission_image, continuum_reflectance_image;, /showplots
 
 
-print, "make changes to bounds of continuum to see the effects in new image."
-
-
-
-; chrono, 
 d2_start        = string(d2_start)           & d2_end = string(d2_end)
 d2_start        = d2_start.compress()        & d2_end = d2_end.compress()
 continuum_start = string(continuum_start)    & continuum_end = string(continuum_end)
@@ -412,7 +355,6 @@ t = text(390, 215,"D2 and Continuum Bounds: ", /device)
 t = text(480,180, string("D2: [" + d2_start        + ","+ d2_end        +"]"), /device)
 t = text(480,155, string("CT: [" + continuum_start + ","+ continuum_end +"]"), /device)
 fname = file_basename(merc_center) & fname = fname.replace(".fits", '') & fname = fname.replace('.fit', '')
-;em.save, "\\lasp-store\home\caba5860\Desktop\MercPipeline Results\SINGLEMERCPROC results of "+strmid(observation_date, 0 ,10)+fname+".jpg"
 
 center_ct = CONTINUUM_REFLECTANCE_IMAGE
 center_em = emission_image

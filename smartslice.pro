@@ -1,15 +1,11 @@
 pro smartslice, image_array, slice_width, slice_bounds
   
-
   imgsize = image_array.dim
   xsize = imgsize[0]
   ysize = imgsize[1]
   slice_indices = [] ; an array to contain slice indices
   ;array = median(image_array[xsize/2-5:xsize/2+5,*], dim = 1)
   array = median(image_array, dim = 1)
-
-
-
 
   ; Remove non-zero bias of noise around spectral image area  
   array -=min(array)
@@ -50,9 +46,9 @@ pro smartslice, image_array, slice_width, slice_bounds
     ;print, model_slice_bounds
     fit = [fit,r2[min_r2_index]]
     sb=[[sb],[[model_slice_bounds]]]
-    ;stop
+    
  endfor
- ;stop
+ stop
  slice_bounds = sb[*,where(fit eq min(fit))]
  slice_width = 18+where(fit eq min(fit))
  print, 'slice bounds found to be '

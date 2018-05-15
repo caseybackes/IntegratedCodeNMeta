@@ -41,29 +41,8 @@ wait, .1
 filter_halfwidth = abs(d2_peak - d2_bound)
 d2_start = d2_peak - filter_halfwidth
 d2_end = d2_peak + filter_halfwidth
-;wdelete, 1
-;establish the continuum boundaries
-;y = 10
-;gauge = "?"
-;cont_center = 250 ; arbitrary start point
-;window,1
-;while y gt 0 do begin
-;  plot, final_observed_spectrum , yrange = [-.5,1.5], title  = "select the quietest continuum range"
-;  cont_start = cont_center - filter_halfwidth
-;  cont_end   = cont_center + filter_halfwidth
-;  r = final_observed_spectrum[cont_start:cont_end]
-;  mean_cont_range = mean(final_observed_spectrum[cont_start:cont_end])
-;  m = fltarr(r.length, 1)+mean_cont_range
-;  x2, m,final_observed_spectrum[cont_start:cont_end], gauge
-;  vline, cont_center
-;  vline, cont_start
-;  vline, cont_end
-;  xyouts, 15,3,string("Gauge: " + string(gauge) + '  centered at ' + string(cont_center)), /device, charsize = 2.0
-;  prev_cont_center = cont_center
-;  cursor, cont_center,y,/data, /down
-;
-;  cont_center = round(cont_center)
-;endwhile
+
+
 if keyword_set(m) then filter_halfwidth*=m
 gauge_array = []
 cstarts =[]
@@ -75,7 +54,6 @@ for cstart = 0,final_observed_spectrum.length-1-(2*filter_halfwidth) do begin
   test_line = make_array(test_region.length, value =  mean(test_region))
   residual_sum_of_squares  = total((test_line - test_region)^2) ; measure the relative flatness in this region 
   gauge_array = [gauge_array ,residual_sum_of_squares] ;  
-  ;if cstart lt 10 then stop
 endfor
 cont_start = cstarts[where(gauge_array eq min(gauge_array))]
 cont_end= cends[where(gauge_array eq min(gauge_array))]
