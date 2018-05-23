@@ -1,0 +1,18 @@
+This is TeX, C Version 3.14t3 (format=plain 92.9.4)  11 AUG 2006 15:51
+**/data1/ssgday/aug10.tex
+(/data1/ssgday/aug10.tex (/usr/local/lib/tex/inputs/kptab1gcam.tex)
+(/data1/ssgday/aug10page.tex) (/data1/ssgday/aug10head.tex)
+(/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--39
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[1] )
+Output written on aug10.dvi (1 page, 6912 bytes).

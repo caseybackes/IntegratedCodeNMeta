@@ -1,0 +1,18 @@
+This is TeX, C Version 3.14t3 (format=plain 92.9.4)  23 MAY 2007 08:31
+**/data1/ssgday/may22.tex
+(/data1/ssgday/may22.tex (/usr/local/lib/tex/inputs/kptab1gcam.tex)
+(/data1/ssgday/may22page.tex) (/data1/ssgday/may22head.tex)
+(/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--35
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[1] )
+Output written on may22.dvi (1 page, 6508 bytes).

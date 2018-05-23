@@ -1,0 +1,52 @@
+This is TeX, C Version 3.14t3 (format=plain 92.9.4)  13 JUN 2006 10:05
+**/data1/ssgday/Jun12.tex
+(/data1/ssgday/Jun12.tex (/usr/local/lib/tex/inputs/kptab1gcam.tex)
+(/data1/ssgday/Jun12page.tex) (/data1/ssgday/Jun12head.tex)
+(/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \vbox (badness 10000) detected at line 41
+
+\vbox(15.0+1.77777)x196.32384
+.\glue 1.6
+.\hbox(4.88889+1.77777)x196.32384, glue set 9.32115fil
+..\ksmtttt w
+..\ksmtttt e
+..\glue 4.25006
+..\ksmtttt a
+..\ksmtttt u
+..etc.
+.\glue 1.6
+.\glue(\lineskip) 0.0
+.\hbox(4.88889+1.77777)x196.32384, glue set 162.32335fil
+..\ksmtttt f
+..\ksmtttt r
+..\ksmtttt i
+..\ksmtttt n
+..\ksmtttt g
+..etc.
+
+
+Underfull \hbox (badness 10000) in alignment at lines 4--49
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[5] (/data1/ssgday/Jun12head.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--83
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[6] )
+Output written on Jun12.dvi (2 pages, 15168 bytes).

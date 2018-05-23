@@ -1,0 +1,42 @@
+This is TeX, C Version 3.14t3 (format=plain 92.9.4)  12 JUN 2006 08:48
+**/data1/ssgday/jun11.tex
+(/data1/ssgday/jun11.tex (/usr/local/lib/tex/inputs/kptab1gcam.tex)
+(/data1/ssgday/jun11page.tex) (/data1/ssgday/jun11head.tex)
+(/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--49
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[2] (/data1/ssgday/jun11head.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--95
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[3] (/data1/ssgday/jun11head.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--137
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[4] )
+Output written on jun11.dvi (3 pages, 24868 bytes).

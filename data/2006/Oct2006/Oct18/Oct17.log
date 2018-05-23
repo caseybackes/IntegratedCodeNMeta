@@ -1,0 +1,76 @@
+This is TeX, C Version 3.14t3 (format=plain 92.9.4)  18 OCT 2006 12:59
+**/data1/ssgday/Oct17.tex
+(/data1/ssgday/Oct17.tex (/usr/local/lib/tex/inputs/kptab1gcam.tex)
+(/data1/ssgday/Oct17page.tex) (/data1/ssgday/Oct17head.tex)
+(/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \vbox (badness 10000) detected at line 37
+
+\vbox(15.0+1.77777)x196.32384
+.\glue 1.6
+.\hbox(4.88889+1.77777)x196.32384, glue set 9.32115fil
+..\ksmtttt S
+..\ksmtttt t
+..\ksmtttt a
+..\ksmtttt r
+..\ksmtttt t
+..etc.
+.\glue 1.6
+.\glue(\lineskip) 0.0
+.\hbox(4.88889+1.77777)x196.32384, glue set 141.07304fil
+..\ksmtttt l
+..\ksmtttt e
+..\ksmtttt a
+..\ksmtttt k
+..\glue 4.25006
+..etc.
+
+
+Underfull \hbox (badness 10000) in alignment at lines 4--49
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[6] (/data1/ssgday/Oct17head.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--95
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[7] (/data1/ssgday/Oct17head.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--141
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[8] (/data1/ssgday/Oct17head.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--169
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[9] )
+Output written on Oct17.dvi (4 pages, 30404 bytes).

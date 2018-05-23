@@ -1,0 +1,30 @@
+This is TeX, C Version 3.14t3 (format=plain 92.9.4)  29 MAR 2007 07:49
+**/data1/ssgday/mar28d.tex
+(/data1/ssgday/mar28d.tex (/usr/local/lib/tex/inputs/kptab1gcam.tex)
+(/data1/ssgday/mar28dpage.tex) (/data1/ssgday/mar28dhead.tex)
+(/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--49
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[4] (/data1/ssgday/mar28dhead.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--83
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[5] )
+Output written on mar28d.dvi (2 pages, 15232 bytes).

@@ -1,0 +1,30 @@
+This is TeX, C Version 3.14t3 (format=plain 92.9.4)  21 SEP 2007 08:15
+**/data1/ssgday/sep20d.tex
+(/data1/ssgday/sep20d.tex (/usr/local/lib/tex/inputs/kptab1gcam.tex)
+(/data1/ssgday/sep20dpage.tex) (/data1/ssgday/sep20dhead.tex)
+(/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--49
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[5] (/data1/ssgday/sep20dhead.tex) (/usr/local/lib/tex/inputs/kptab2gcam.tex)
+Underfull \hbox (badness 10000) in alignment at lines 4--79
+[][][][][][][][][][][][]
+
+\hbox(0.0+0.0)x722.7
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x71.93188
+.\glue(\tabskip) 0.0
+.\unsetbox(0.0+0.0)x143.06378
+.\glue(\tabskip) 0.0
+.etc.
+
+[6] )
+Output written on sep20d.dvi (2 pages, 14460 bytes).
