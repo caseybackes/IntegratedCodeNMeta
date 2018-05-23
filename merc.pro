@@ -355,13 +355,7 @@ ct = image_pixel_multiplier[0]*final_ct_img   ;|
 
  
   today = strsplit(string(systime()), ' ', /extract)
-  ; example of 'today' varibale:
-  ;IDL> today
-  ;Wed        today[0]
-  ;Jun        today[1]
-  ;22         today[2]
-  ;14:19:09   today[3]
-  ;2016       today[4]
+
   curtime = strsplit(today[3], ':', /extract)
   curhr   = string(curtime[0])
   curmn   = string(curtime[1])
@@ -374,12 +368,10 @@ ct = image_pixel_multiplier[0]*final_ct_img   ;|
   img_savename = string(curdir + '\IntegratedCodeNMeta\Completed Pipeline Products\Images\' +obsdate +' '+ fname +' @'+m+".jpg")
   savefile_savename = string(curdir + '\IntegratedCodeNMeta\Completed Pipeline Products\IDLSaveFiles\'+obsdate+' ' + fname +' @'+m+".sav")
         
-
   closewin
   w1 = window(dimensions = [800,700])
   w1.window.setcurrent
   rf = image(ct,  layout = [3,1,1], rgb_table = 13, /current)
-  ; make the circle? 
   
   c = colorbar(target= i,position = [45,75,224,105], title = "Continuum Reflectance (kR)", /device )
   em = image(d2, layout = [3,1,2], /current, rgb_table = 13)
@@ -483,7 +475,7 @@ endif else if keyword_set(single) then begin
   ; The image pixel multiplier simply puts "counts" or "reduced ADU"
   ; into values and units of kiloreyleighs.
   ; (for some reason, the image pixel multiplier is an array of length 1, so we extract it
-  ; and essentially make it a float-type value.
+  ; and essentially make it a float-type value).
   
   d2 = image_pixel_multiplier[0]*center_ct   ;|
   ct = image_pixel_multiplier[0]*center_em   ;|
@@ -510,13 +502,7 @@ endif else if keyword_set(single) then begin
 
   obsdate = redate(merc_Center_image)
   today = strsplit(string(systime()), ' ', /extract)
-  ; example of 'today' varibale:
-  ;IDL> today
-  ;Wed        today[0]
-  ;Jun        today[1]
-  ;22         today[2]
-  ;14:19:09   today[3]
-  ;2016       today[4]
+
   curtime = strsplit(today[3], ':', /extract)
   curhr   = string(curtime[0])
   curmn   = string(curtime[1])
