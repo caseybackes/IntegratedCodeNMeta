@@ -1,0 +1,1 @@
+Raw images as aquired by the original observers, used to create final data product. 
