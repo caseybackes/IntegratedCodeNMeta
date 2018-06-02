@@ -82,8 +82,9 @@ pro merc, merc_center_image, SINGLE = single, CT_RANGE_FACTOR = ct_range_factor
 curdir = strsplit(file_dirname(merc_center_image), '\', /extract)
 while curdir[-1] ne "MercuryResearch" do curdir = curdir[0:-2]
 curdir = strjoin(curdir, '\')
+metadir = curdir+string('\IntegratedCodeNMeta')
 
-;stop
+
 print, ""
 print, "INSTRUCTIONS -"
 print, "We automatically detect the most appropriate calibration file, if it exists, to process this image(or set). "

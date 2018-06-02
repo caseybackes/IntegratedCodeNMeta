@@ -73,6 +73,7 @@ while curdir[-1] ne "MercuryResearch" do begin
 endwhile
 
 curdir = strjoin(curdir, '\')
+metadir = curdir+string('\IntegratedCodeNMeta')
 
 dark_array = dark_reduce3(merc_center)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;       
@@ -133,7 +134,7 @@ sky_regd = warp_tri(xo,yo,xi,yi,sky_bright)
 
 
 merc_reduced = flatfield(merc_regd,sky_regd)
-stop
+;stop
 
 
 smartslice, merc_reduced, slice_width, slice_indices
@@ -141,7 +142,7 @@ smartslice, merc_reduced, slice_width, slice_indices
 ;merc_reduced[*,slice_indices[-1]:*]=0
 atv, merc_reduced
 
-stop
+;stop
 
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsAfterSmartslice.sav'
 imreg_x, merc_reduced, slice_indices, merc_reduced, transformation_matrix
@@ -242,7 +243,7 @@ wavelength_check = 'n'
 save, /variables, filename = 'C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\VarsBeforeWavelength.sav'
 ;stop
 while wavelength_check eq 'n' do begin
-  determine_wavelength_scale, sky_regd, slice_indices, observed_wavelength
+  determine_wavelength_scale, sky_regd, slice_indices, metadir, observed_wavelength
 
   observed_spectrum =  median(merc_reduced[*,slice_indices[0]:slice_indices[-1]], dim = 2); this will work even if slice boundaries were manually chosen
   size_of_observed_spectrum = observed_spectrum.length

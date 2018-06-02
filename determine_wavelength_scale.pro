@@ -4,7 +4,7 @@
 ;-
 ;
 
-pro determine_wavelength_scale, sky_bright, slice_indices, observed_wl
+pro determine_wavelength_scale, sky_bright, slice_indices, metadir, observed_wl
 
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -100,9 +100,9 @@ pro determine_wavelength_scale, sky_bright, slice_indices, observed_wl
   ; I have a png file with the identified lines and their codes, in addition to having one pinned to the wall of my office cubicle.
   ; this will ask you if you want to see a png of such a sky spectrum with waterlines.
   d = dialog_message("Do you need to see the image of waterlines and their codes? ", /question)
-;  if d eq 'Yes' then begin
-;    waterlines_image = image(read_png("C:\Users\Casey Backes\Documents\IDLWorkspace84\Default\MercuryResearch\IntegratedCodeNMeta\reference sky spectrum with waterlines.PNG"), title = "Waterline features and wavelengths and codes")
-;  endif
+  if d eq 'Yes' then begin
+    waterlines_image = image(read_png(file_search(metadir, "*waterlines*")))
+  endif
 
 
   ; Now we associate each of the water lines we selected. From the image
@@ -162,4 +162,4 @@ pro determine_wavelength_scale, sky_bright, slice_indices, observed_wl
   return
   end
 
-reverse(
+

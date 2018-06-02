@@ -74,10 +74,15 @@ pro batch_dark_rot, merc_center, dark_array, $  ; input
       ; should indicate a cumulatively brighter "left side" of the plot compared to the "right side".
       leftside = total(north_median_across_spectrum[0:north_median_across_spectrum.length/2])
       rightside =total(north_median_across_spectrum[north_median_across_spectrum.length/2+1:*])
+      
+      ; account for instances where the CCD was installed upside down relative to typical installation orientation:
+      if strcmp(merc_timestamp,'2013', 4) then begin
+          if  rightside gt leftside then good_rotation = 'y'
+      endif else begin
       if leftside gt rightside then good_rotation = 'y'
-
+      endelse
     endwhile
-  endif
+  endif 
 
   if keyword_set(single) then begin
     dims = merc_bright.dim
